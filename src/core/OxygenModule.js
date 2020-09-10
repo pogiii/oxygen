@@ -34,13 +34,32 @@ export default class OxygenModule {
         if (!thisArg) {
             thisArg = this;
         }
-        Object.defineProperty(Object.getPrototypeOf(this), name, {
-            value: func.bind(thisArg)
-        });
+        this[name] =  func.bind(thisArg);
     }
-    addSubModule(name, submodule) {
-        Object.defineProperty(Object.getPrototypeOf(this), name, {
-            value: submodule
-        });
+    deleteSubModule(name) {
+        console.log('~~deleteSubModule', name);
+        delete this[name];
+    }
+    addSubModule(name, submodule, id) {
+        // if (Object.getPrototypeOf(this)[name]) {
+        //     return;
+        // }
+
+        // console.log('~~this', this);
+        // console.log('~~name', name);
+        // console.log('~~this[name]', this[name]);
+        // console.log('~~Object.getPrototypeOf(this)', Object.getPrototypeOf(this));
+
+        console.log('~~name', name);
+        console.log('~~this[name]', this[name]);
+        console.log('~~!!~~!!~~ network new id', submodule.id);
+
+        try {
+            this[name] = submodule;
+
+            console.log('~~!!~~!!~~ this id', this[name]['id']);
+        } catch (e) {
+            console.log('~~e', e);
+        }
     }
 }

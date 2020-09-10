@@ -551,7 +551,20 @@ export default class Oxygen extends OxygenEvents {
             }
 
             if (cmdName === 'init') {
-                this._wrapAsync(this._callServicesOnModuleInitialized).apply(this, [module]);
+                console.log('~~!!~~ cmdName', cmdName);
+                console.log('~~!!~~ _commandWrapper module.name', module.name);
+                console.log('~~!!~~ _commandWrapper module.parent', !!module.parent);
+                // this._callServicesOnModuleLoaded(module);
+                // this._wrapAsync(this._callServicesOnModuleInitialized).apply(this, [module]);
+
+                if (module.parent) {
+                    console.log('~~!!~~ _commandWrapper module.parent.name', module.parent.name);
+                    this._callServicesOnModuleLoaded(module.parent);
+                    this._wrapAsync(this._callServicesOnModuleInitialized).apply(this, [module.parent, module.name]);
+                } else {
+                    this._callServicesOnModuleLoaded(module);
+                    this._wrapAsync(this._callServicesOnModuleInitialized).apply(this, [module, module.name]);
+                }
             }
 
         } catch (e) {
@@ -868,12 +881,20 @@ export default class Oxygen extends OxygenEvents {
      * Services Event Emitters
      */
     _callServicesOnModuleLoaded(module) {
+        console.log('~~this.services', Object.keys(this.services));
         for (let serviceName in this.services) {
+
             const service = this.services[serviceName];
             if (!service) {
                 continue;
             }
             try {
+
+                if (module && module.name && module.name === 'web') {
+                    console.log('~~module1', module.name);
+                    console.log('~~service1', serviceName);
+                }
+
                 service.onModuleLoaded(module);
             }
             catch (e) {
@@ -882,8 +903,12 @@ export default class Oxygen extends OxygenEvents {
         }
     }
     async _callServicesOnModuleInitialized(module) {
+
+        console.log('~~!!~~ _callServicesOnModuleInitialized    module.name', module.name);
+
         for (let serviceName in this.services) {
             const service = this.services[serviceName];
+            console.log('~~!!~~ _callServicesOnModuleInitialized    service', !!service);
             if (!service) {
                 continue;
             }

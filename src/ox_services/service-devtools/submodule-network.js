@@ -21,15 +21,35 @@ export default class NetworkSubModule extends OxygenSubModule {
         this._devTools = null;
         this._networkRequests = [];
         this._collectData = false;
+        this.id = +new Date();
+        if (parent && parent.name && parent.name === 'web') {
+            console.log('\x1b[35m', '   ~~new NetworkSubModule this.id', this.id, '~!for', parent.name, '\x1b[0m');
+
+            setInterval(()=>{
+                console.log('\x1b[35m', '   ~~Interval ~~NetworkSubModule this.id', this.id, '\x1b[0m');
+            }, 2000);
+        }
     }
 
     init(devTools) {
         if (!devTools || !this._parent || !this._parent.getDriver || typeof this._parent.getDriver !== 'function' || !this._parent.getDriver()) {
+            console.log('~~NetworkSubModule init');
+            console.log('~~NetworkSubModule devTools', !!devTools);
+            console.log('~~NetworkSubModule this._parent', !!this._parent);
+            console.log('~~NetworkSubModule this._parent.getDriver', !!this._parent.getDriver);
             super.init();
+
+            console.log('retun false $38');
+
             return false;
         }
         this._devTools = devTools;
+
+        console.log('~~this.driver set');
+        console.log('\x1b[35m', '   ~~NetworkSubModule this.id', this.id, '\x1b[0m');
+        console.log('~~this._parent.name', this._parent.name);
         this._driver = this._parent.getDriver();
+        console.log('~~this.driver', !!this._driver);
         this._devTools.session.on('Network.responseReceived', this._onNetworkResponseReceived.bind(this));
         this._devTools.session.on('Network.requestWillBeSent', this._onNetworkRequestWillBeSent.bind(this));
         super.init();
@@ -37,6 +57,8 @@ export default class NetworkSubModule extends OxygenSubModule {
     }
 
     async dispose() {
+
+        console.log('~~NetworkSubModule dispose');
 
         try {
             if (this._devTools) {
@@ -50,6 +72,7 @@ export default class NetworkSubModule extends OxygenSubModule {
         }
 
         this._devTools = null;
+        console.log('~~this.driver set null');
         this._driver = null;
         this._networkRequests = [];
         super.dispose();
@@ -103,6 +126,12 @@ export default class NetworkSubModule extends OxygenSubModule {
      * @return {Object} Network request details if the network request was found.
      */
     waitForUrl(pattern, timeout = 60*1000) {
+
+        console.log('\x1b[35m', '   ~~NetworkSubModule this.id', this.id, '\x1b[0m');
+        console.log('~~this._driver', !!this._driver);
+        console.log('~~this._isInitialized', !!this._isInitialized);
+        console.log('~~this._parent', !!this._parent);
+
         if (!this._driver || !this._isInitialized || !this._parent) {
             throw new OxError(errHelper.errorCode.MODULE_NOT_INITIALIZED_ERROR, '`web` module is not initialized.');
         }
