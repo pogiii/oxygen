@@ -79,6 +79,8 @@
     "perfecto-reporting": "2.5.3",
     "request": "2.88.2",
     "saucelabs": "3.0.1",
+    "selenium-appium": "0.0.16",
+    "selenium-webdriver": "^4.0.0-alpha.7",
     "serialport": "9.0.2",
     "soap": "0.33.0",
     "source-map-support": "0.5.19",

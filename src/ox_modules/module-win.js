@@ -32,6 +32,7 @@ import WebDriverModule from '../core/WebDriverModule';
 import modUtils from './utils';
 import errHelper from '../errors/helper';
 import OxError from '../errors/OxygenError';
+import { By2, driver, WebDriver2 } from 'selenium-appium';
 
 const MODULE_NAME = 'win';
 const DEFAULT_APPIUM_URL = 'http://localhost:4723/wd/hub';
@@ -139,7 +140,7 @@ export default class WindowsModule extends WebDriverModule {
         }
         // set default platformVersion for WinAppDriver
         if (!this.caps.platformVersion) {
-            this.caps.platformVersion = '1.0';
+            this.caps.platformVersion = '1.0.1-Preview';
         }
         // populate WDIO options
         const url = URL.parse(appiumUrl);
@@ -164,20 +165,31 @@ export default class WindowsModule extends WebDriverModule {
             port: port,
             path: path,
             capabilities: this.caps,
-            logLevel: 'silent',
+            logLevel: 'trace',
             runner: 'repl',
-            waitforTimeout: 5000, // increase the default 3000
+            waitforTimeout: 654000, // increase the default 3000
             connectionRetryTimeout: 310*1000,
-            connectionRetryCount: 1
+            connectionRetryCount: 10
         };
 
         try {
+            console.log('~~wdioOpts', wdioOpts);
             this.driver = await wdio.remote(wdioOpts);
+            this.driver2 = await driver.startWithCapabilities(wdioOpts.capabilities);
+
+            const webdriver = new WebDriver2();
+            this.driver3 = await webdriver.startWithCapabilities(wdioOpts.capabilities);
+            console.log('~~this.driver', this.driver);
+            console.log('~~this.driver2', this.driver2);
+            console.log('~~this.driver3', this.driver3);
+            console.log('~~By2', By2);
+            this.By2 = By2;
         }
         catch (e) {
             throw errHelper.getAppiumInitError(e);
         }
 
+        console.log('~~this.waitForTimeout', this.waitForTimeout);
         await this.driver.setTimeout({ 'implicit': this.waitForTimeout });
 
         super.init();

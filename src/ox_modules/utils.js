@@ -46,16 +46,31 @@ module.exports = {
     },
 
     getElement: async function(locator, waitForVisible, timeout) {
+
+        console.log('~~module.exports.setTimeoutImplicit', module.exports.setTimeoutImplicit);
         if (timeout) {
-            await module.exports.setTimeoutImplicit.call(this, timeout);
+            const setTimeoutImplicitRV = await module.exports.setTimeoutImplicit.call(this, timeout);
+            console.log('~~setTimeoutImplicitRV', setTimeoutImplicitRV);
         }
 
         var el;
         if (locator && locator.constructor && locator.constructor.name === 'Element') {
             el = locator;
         } else {
+            console.log('~~locator1', locator);
             locator = this.helpers.getWdioLocator(locator);
-            el = await this.driver.$(locator);
+            console.log('~~locator2', locator);
+
+            if (this.By2) {
+                console.log('~~By2 before');
+                el = await this.By2.nativeXpath(locator);
+                console.log('~~By2 after el', el);
+            } else {
+                console.log('~~$ before');
+                el = await this.driver.$(locator);
+                console.log('~~$ after');
+            }
+
         }
 
         if (el.error && (
